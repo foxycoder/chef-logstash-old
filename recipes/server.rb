@@ -27,30 +27,43 @@ else
   service_resource = 'service[logstash_server]'
 end
 
+amqp_instances = node[:opsworks][:layers][:rabbitmq][:instances]
+amqp_hosts = instances.map{ |name, attrs| attrs['private_ip'] }
+
+inputs = node['logstash']['server']['inputs'].map do |type, config|
+  if type == 'rabbitmq' && node['rabbitmq_cluster']['user']
+    { type => config.merge({
+        :user => node['rabbitmq_cluster']['user'],
+        :password => node['rabbitmq_cluster']['password'],
+        :host => amqp_hosts.first
+      })
+    }
+  else
+    { type => config }
+  end
+end
+
 if node['logstash']['server']['patterns_dir'][0] == '/'
   patterns_dir = node['logstash']['server']['patterns_dir']
 else
   patterns_dir = node['logstash']['basedir'] + '/' + node['logstash']['server']['patterns_dir']
 end
 
-if Chef::Config[:solo]
-  es_server_ip = node['logstash']['elasticsearch_ip']
-  graphite_server_ip = node['logstash']['graphite_ip']
+es_instances = node[:opsworks][:layers][:elasticsearch][:instances]
+es_hosts = instances.map{ |name, attrs| attrs['private_ip'] }
+
+graphite_results = search(:node, node['logstash']['graphite_query'])
+
+unless es_results.empty?
+  es_server_ip = es_hosts.first
 else
-  es_results = search(:node, node['logstash']['elasticsearch_query'])
-  graphite_results = search(:node, node['logstash']['graphite_query'])
+  es_server_ip = node['logstash']['elasticsearch_ip']
+end
 
-  unless es_results.empty?
-    es_server_ip = es_results[0]['ipaddress']
-  else
-    es_server_ip = node['logstash']['elasticsearch_ip']
-  end
-
-  unless graphite_results.empty?
-    graphite_server_ip = graphite_results[0]['ipaddress']
-  else
-    graphite_server_ip = node['logstash']['graphite_ip']
-  end
+unless graphite_results.empty?
+  graphite_server_ip = graphite_results[0]['ipaddress']
+else
+  graphite_server_ip = node['logstash']['graphite_ip']
 end
 
 # Create directory for logstash
