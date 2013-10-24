@@ -1,6 +1,6 @@
-default['logstash']['server']['version'] = '1.1.13'
-default['logstash']['server']['source_url'] = 'https://logstash.objects.dreamhost.com/release/logstash-1.1.13-flatjar.jar'
-default['logstash']['server']['checksum'] = '5ba0639ff4da064c2a4f6a04bd7006b1997a6573859d3691e210b6855e1e47f1'
+default['logstash']['server']['version'] = '1.2.1'
+default['logstash']['server']['source_url'] = 'http://logstash.objects.dreamhost.com/release/logstash-1.2.1-flatjar.jar'
+default['logstash']['server']['checksum'] = 'd0b8a56fb1aa71d54c2bab71709d900b359fdf8c6d7d6ff15578423a0d86ee23'
 default['logstash']['server']['install_method'] = 'jar' # Either `source` or `jar`
 default['logstash']['server']['patterns_dir'] = 'server/etc/patterns'
 default['logstash']['server']['base_config'] = 'server.conf.erb'
