@@ -28,7 +28,7 @@ else
 end
 
 amqp_instances = node[:opsworks][:layers][:rabbitmq][:instances]
-amqp_hosts = instances.map{ |name, attrs| attrs['private_ip'] }
+amqp_hosts = amqp_instances.map{ |name, attrs| attrs['private_ip'] }
 
 inputs = node['logstash']['server']['inputs'].map do |type, config|
   if type == 'rabbitmq' && node['rabbitmq_cluster']['user']
