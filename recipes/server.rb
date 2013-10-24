@@ -54,7 +54,7 @@ es_hosts = es_instances.map{ |name, attrs| attrs['private_ip'] }
 
 graphite_results = []
 
-unless es_results.empty?
+unless es_hosts.empty?
   es_server_ip = es_hosts.first
 else
   es_server_ip = node['logstash']['elasticsearch_ip']
