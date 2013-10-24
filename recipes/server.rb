@@ -50,7 +50,7 @@ else
 end
 
 es_instances = node[:opsworks][:layers][:elasticsearch][:instances]
-es_hosts = instances.map{ |name, attrs| attrs['private_ip'] }
+es_hosts = es_instances.map{ |name, attrs| attrs['private_ip'] }
 
 graphite_results = search(:node, node['logstash']['graphite_query'])
 
