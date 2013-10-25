@@ -49,15 +49,19 @@ else
   patterns_dir = node['logstash']['basedir'] + '/' + node['logstash']['server']['patterns_dir']
 end
 
-es_instances = node[:opsworks][:layers][:elasticsearch][:instances]
-es_hosts = es_instances.map{ |name, attrs| attrs['private_ip'] }
+unless node['logstash']['server']['outputs'] &&
+  node['logstash']['server']['outputs'].select{|n,c| n == 'elasticsearch'}.any?
 
-graphite_results = []
+  es_instances = node[:opsworks][:layers][:elasticsearch][:instances]
+  es_hosts = es_instances.map{ |name, attrs| attrs['private_ip'] }
 
-unless es_hosts.empty?
-  es_server_ip = es_hosts.first
-else
-  es_server_ip = node['logstash']['elasticsearch_ip']
+  graphite_results = []
+
+  unless es_hosts.empty?
+    es_server_ip = es_hosts.first
+  else
+    es_server_ip = node['logstash']['elasticsearch_ip']
+  end
 end
 
 unless graphite_results.empty?
