@@ -27,8 +27,10 @@ else
   service_resource = 'service[logstash_server]'
 end
 
-amqp_instances = node[:opsworks][:layers][:rabbitmq][:instances]
-amqp_hosts = amqp_instances.map{ |name, attrs| attrs['private_ip'] }
+if node[:opsworks][:layers][:rabbitmq]
+  amqp_instances = node[:opsworks][:layers][:rabbitmq][:instances]
+  amqp_hosts = amqp_instances.map{ |name, attrs| attrs['private_ip'] }
+end
 
 inputs = node['logstash']['server']['inputs'].map do |type, config|
   if type == 'rabbitmq' && node['rabbitmq_cluster']['user']
